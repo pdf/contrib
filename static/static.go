@@ -1,12 +1,13 @@
 package static
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"os"
 	"path"
 	"path/filepath"
 	"strings"
+
+	"github.com/gin-gonic/gin"
 )
 
 type ServeFileSystem interface {
@@ -53,12 +54,9 @@ func (l *localFileSystem) Open(name string) (http.File, error) {
 }
 
 func (l *localFileSystem) Exists(prefix string, filepath string) bool {
-
-	if p := strings.TrimPrefix(filepath, prefix); len(p) < len(filepath) {
-		p = path.Join(l.root, p)
-		return existsFile(p)
-	}
-	return false
+	p := strings.TrimPrefix(filepath, prefix)
+	p = path.Join(l.root, p)
+	return existsFile(p)
 }
 
 type neuteredReaddirFile struct {
@@ -83,7 +81,7 @@ func Serve(prefix string, fs ServeFileSystem) gin.HandlerFunc {
 
 		if fs.Exists(prefix, c.Request.URL.Path) {
 			fileserver.ServeHTTP(c.Writer, c.Request)
-			c.Abort()
+			c.Abort(0)
 		} else {
 			c.Next()
 		}
