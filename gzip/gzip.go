@@ -2,8 +2,9 @@ package gzip
 
 import (
 	"compress/gzip"
-	"github.com/gin-gonic/gin"
 	"strings"
+
+	"github.com/gin-gonic/gin"
 )
 
 const (
@@ -59,5 +60,6 @@ func Gzip(level int) gin.HandlerFunc {
 		c.Writer = gzwriter
 		c.Next()
 		writer.Header().Del(headerContentLength)
+		c.Writer = writer
 	}
 }
